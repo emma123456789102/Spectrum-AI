@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        
+            <img src="spectrum-Ai-logo.png" alt="Spectrum AI Logo" class="logo">
+        <div class="nav-links">
+            <a href="about.html">About</a>
+            <a href="support-page.html">Support</a>
+            <a href="login.html">Login</a>
+            <button onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h2>Hello, User! 👋</h2>
+        <p>Access your questionnaire results and track progress below.</p>
+
+        <div class="card">
+            <h3>Your Recent Activity</h3>
+            <p id="lastActivity">No recent activity yet.</p>
+        </div>
+
+        <button class="primary-btn" onclick="startQuestionnaire()">📋 Start New Questionnaire</button>
+    </div>
+
+    <script>
+        function logout() {
+            if (confirm("Are you sure you want to logout?")) {
+                window.location.href = "index.html";
+            }
+        }
+
+        function startQuestionnaire() {
+            const currentDate = new Date().toLocaleDateString();
+            localStorage.setItem('lastQuestionnaireDate', currentDate);
+            window.location.href = "start questionnaire.html";
+        }
+
+        window.onload = function() {
+            const lastDate = localStorage.getItem('lastQuestionnaireDate');
+            const lastActivityElement = document.getElementById('lastActivity');
+            if (lastDate) {
+                lastActivityElement.textContent = `Last questionnaire completed on: ${lastDate}`;
+            }
+        };
+    </script>
+
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #74ebd5, #acb6e5);
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background: #003366;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+    height: 50px; /* Adjust size as needed */
+    width: auto;
+}
+
+        .nav-links a, .nav-links button {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .nav-links button:hover {
+            color: #f8b400;
+        }
+
+        /* Content Container */
+        .container {
+            margin-top: 50px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 50%;
+            margin: auto;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        /* Buttons */
+        .primary-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .primary-btn:hover {
+            background: #45a049;
+        }
+    </style>
+
+</body>
+</html>

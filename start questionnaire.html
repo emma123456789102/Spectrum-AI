@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autism Questionnaire</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <h1>Autism Self-Assessment</h1>
+        <button id="backBtn">Back to Dashboard</button>
+    </nav>
+
+    <div class="container">
+        <h2>Welcome to the Autism Self-Assessment</h2>
+        <p>This questionnaire is designed to help assess traits that might be associated with autism spectrum disorder (ASD). Your answers will be analysed based on a scale to determine whether further evaluation might be helpful.</p>
+
+        <div class="card">
+            <h3>⚠️ Important Disclaimer</h3>
+            <p>This is not a medical diagnosis. It is a self-assessment tool intended to provide general guidance. If you have concerns, please consult a healthcare professional.</p>
+        </div>
+
+        <button class="start-btn" id="startBtn">Start Questionnaire</button>
+    </div>
+
+    <script>
+        document.getElementById("startBtn").addEventListener("click", function(event) {
+            event.preventDefault(); // Prevent unwanted default behavior
+            window.location.href = "questionnaires.html"; // Redirect to Questionnaire
+        });
+
+        document.getElementById("backBtn").addEventListener("click", function(event) {
+            event.preventDefault();
+            window.location.href = "dashboard.html"; // Redirect to Dashboard
+        });
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #74ebd5, #acb6e5);
+            text-align: center;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: #003366;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .container {
+            margin-top: 50px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 60%;
+            margin: auto;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 12px 20px;
+            font-size: 18px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        .start-btn {
+            background: #007bff;
+        }
+
+        .start-btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</body>
+</html>

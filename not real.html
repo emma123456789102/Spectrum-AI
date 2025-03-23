@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autism Screening Questionnaire</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #74ebd5, #acb6e5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+        fieldset {
+            border: none;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        legend {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin: 5px 0;
+        }
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: none;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .accessibility-controls {
+            margin-bottom: 15px;
+        }
+        .accessibility-controls button {
+            width: 48%;
+            padding: 8px;
+            margin: 5px;
+            border-radius: 5px;
+            border: none;
+            background: #ff9800;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .accessibility-controls button:hover {
+            background: #e68900;
+        }
+        .high-contrast-mode {
+            background: black;
+            color: yellow;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Autism Screening Questionnaire</h1>
+            <p>Answer the questions below to help screen for autism symptoms.</p>
+            <div class="accessibility-controls">
+                <button id="increase-text">Increase Text Size</button>
+                <button id="decrease-text">Decrease Text Size</button>
+                <button id="high-contrast">Toggle High Contrast</button>
+                <button id="speak-text">Speak Text</button>
+            </div>
+        </header>
+
+        <main>
+            <form id="questionnaireForm">
+                <fieldset>
+                    <legend>1. Does your child make eye contact?</legend>
+                    <label><input type="radio" name="eye_contact" value="Yes" required> Yes</label>
+                    <label><input type="radio" name="eye_contact" value="No"> No</label>
+                </fieldset>
+
+                <fieldset>
+                    <legend>2. Does your child respond to their name?</legend>
+                    <label><input type="radio" name="response_to_name" value="Yes" required> Yes</label>
+                    <label><input type="radio" name="response_to_name" value="No"> No</label>
+                </fieldset>
+
+                <fieldset>
+                    <legend>3. Does your child engage in pretend play?</legend>
+                    <label><input type="radio" name="pretend_play" value="Yes" required> Yes</label>
+                    <label><input type="radio" name="pretend_play" value="No"> No</label>
+                </fieldset>
+
+                <fieldset>
+                    <legend>4. How does your child typically communicate?</legend>
+                    <label><input type="radio" name="communication" value="Verbal speech" required> Verbal speech</label>
+                    <label><input type="radio" name="communication" value="Gestures"> Gestures</label>
+                    <label><input type="radio" name="communication" value="Sign language"> Sign language</label>
+                    <label><input type="radio" name="communication" value="Other"> Other</label>
+                </fieldset>
+                <fieldset>
+                  <legend>Social and Sensory Behaviors</legend>
+                  <div class="question">
+                    <p>5. Does your child show interest in other children?</p>
+                    <label><input type="radio" name="interest_in_children" value="Yes" required> Yes</label>
+                    <label><input type="radio" name="interest_in_children" value="No"> No</label>
+                  </div>
+                  <div class="question">
+                    <p>6. Does your child have repetitive movements (e.g., hand-flapping, rocking)?</p>
+                    <label><input type="radio" name="repetitive_movements" value="Yes" required> Yes</label>
+                    <label><input type="radio" name="repetitive_movements" value="No"> No</label>
+                  </div>
+                  <div class="question">
+                    <p>7. Does your child have difficulties understanding social cues or emotions?</p>
+                    <label><input type="radio" name="social_cues" value="Yes" required> Yes</label>
+                    <label><input type="radio" name="social_cues" value="No"> No</label>
+                  </div>
+                  <div class="question">
+                    <p>8. Does your child have any sensory sensitivities?</p>
+                    <label><input type="radio" name="sensory_sensitivities" value="Yes" required> Yes</label>
+                    <label><input type="radio" name="sensory_sensitivities" value="No"> No</label>
+                  </div>
+                </fieldset>
+          
+                <fieldset>
+                  <legend>Routine and Developmental History</legend>
+                  <div class="question">
+                    <p>9. Does your child have specific interests or hobbies they are passionate about?</p>
+                    <label><input type="radio" name="specific_interests" value="Yes" required> Yes</label>
+                    <label><input type="radio" name="specific_interests" value="No"> No</label>
+                  </div>
+                  <div class="question">
+                    <p>10. Does your child have difficulties with changes in routine?</p>
+                    <label><input type="radio" name="routine_changes" value="Yes" required> Yes</label>
+                    <label><input type="radio" name="routine_changes" value="No"> No</label>
+                  </div>
+                  <div class="question">
+                    <p>11. Were any developmental delays noticed early on?</p>
+                    <label><input type="radio" name="developmental" value="Yes" required> Yes</label>
+                    <label><input type="radio" name="developmental" value="No"> No</label>
+                  </div>
+                </fieldset>
+              </div>
+          
+              <fieldset>
+                <legend>Additional Information</legend>   
+                <div class="question">
+                  <p>12. Is there any other information you would like to share about your child?</p>
+                  <textarea name="additional_info" rows="4" cols="50"></textarea>
+                    
+
+                <button type="submit">Submit</button>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        document.getElementById("increase-text").addEventListener("click", () => {
+            document.body.style.fontSize = "1.2em";
+        });
+
+        document.getElementById("decrease-text").addEventListener("click", () => {
+            document.body.style.fontSize = "1em";
+        });
+
+        document.getElementById("high-contrast").addEventListener("click", () => {
+            document.body.classList.toggle("high-contrast-mode");
+        });
+
+        document.getElementById("speak-text").addEventListener("click", () => {
+            const questions = document.querySelectorAll("legend");
+            let textToSpeak = "";
+            questions.forEach((question) => {
+                textToSpeak += question.textContent + " ";
+            });
+
+            if ('speechSynthesis' in window) {
+                const speech = new SpeechSynthesisUtterance(textToSpeak);
+                speech.lang = 'en-US';
+                speech.rate = 0.9;
+                window.speechSynthesis.speak(speech);
+            } else {
+                alert("Sorry, your browser doesn't support text-to-speech.");
+            }
+        });
+
+        // Firebase Setup
+        const firebaseConfig = {
+            apiKey: "AIzaSyDbyxievV9aKGHjLFyO0BKKv4V8rRd5P-k",
+            authDomain: "autismdiagnosistool.firebaseapp.com",
+            projectId: "autismdiagnosistool",
+            storageBucket: "autismdiagnosistool.appspot.com",
+            messagingSenderId: "932313058973",
+            appId: "1:932313058973:web:fbb31ab2cf6ef0ae700e74",
+            measurementId: "G-VDYP4DYPXB"
+        };
+
+        import("https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js")
+            .then(firebase => {
+                const app = firebase.initializeApp(firebaseConfig);
+                return import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js")
+                    .then(firestore => {
+                        const db = firestore.getFirestore(app);
+                        document.getElementById("questionnaireForm").addEventListener("submit", async function(event) {
+                            event.preventDefault();
+
+                            const formData = {};
+                            document.querySelectorAll('input[type="radio"]:checked').forEach(input => {
+                                formData[input.name] = input.value;
+                            });
+
+                            try {
+                                const docRef = await firestore.addDoc(firestore.collection(db, "autism_responses"), formData);
+                                console.log("Document written with ID: ", docRef.id);
+                                alert("Form submitted successfully!");
+                                window.location.href = "diagnosis-page.html";
+                            } catch (error) {
+                                console.error("Error submitting form:", error);
+                                alert("An error occurred. Please try again.");
+                            }
+                        });
+                    });
+            });
+    </script>
+</body>
+</html>
+
+   
