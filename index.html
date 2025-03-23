@@ -4,128 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Autism Diagnosis Tool - Sign In</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <div id="root">
-    <div class="card" id="authPage">
-      <h1 id="formTitle">Create New Account</h1>
-      
-      <!-- ✅ Form for Signing Up -->
-      <form id="authForm">
-        <label for="name" id="nameLabel">Full Name:</label>
-        <input type="text" id="name" name="name" required>
-
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-
-        <label for="dob" id="dobLabel">Date of Birth:</label>
-        <input type="date" id="dob" name="dob" required>
-
-        <button type="submit">Sign Up</button>
-      </form>
-      
-      <p id="toggleAuth">Already have an account? <a href="already_have.html">Log In</a></p>
-    </div>
-  </div>
-
-  <!-- ✅ Firebase Authentication & Firestore -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-    const firebaseConfig = {
-  apiKey: "AIzaSyDbyxievV9aKGHjLFyO0BKKv4V8rRd5P-k",
-  authDomain: "autismdiagnosistool.firebaseapp.com",
-  projectId: "autismdiagnosistool",
-  storageBucket: "autismdiagnosistool.firebasestorage.app",
-  messagingSenderId: "932313058973",
-  appId: "1:932313058973:web:fbb31ab2cf6ef0ae700e74",
-  measurementId: "G-VDYP4DYPXB"
-};
-
-
-
-    // ✅ Initialize Firebase & Firestore
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    document.addEventListener("DOMContentLoaded", function () {
-      const authForm = document.getElementById("authForm");
-      const toggleAuth = document.getElementById("toggleAuth");
-      const formTitle = document.getElementById("formTitle");
-      const nameField = document.getElementById("name");
-      const nameLabel = document.getElementById("nameLabel");
-      const dobField = document.getElementById("dob");
-      const dobLabel = document.getElementById("dobLabel");
-      let isSignUp = true;
-
-      toggleAuth.addEventListener("click", (e) => {
-        e.preventDefault();
-        isSignUp = !isSignUp;
-        formTitle.innerText = isSignUp ? "Create New Account" : "Sign In";
-        toggleAuth.innerHTML = isSignUp 
-          ? 'Already have an account? <a href="already_have.html">Log In</a>' 
-        nameField.style.display = isSignUp ? "block" : "none";
-        nameLabel.style.display = isSignUp ? "block" : "none";
-        dobField.style.display = isSignUp ? "block" : "none";
-        dobLabel.style.display = isSignUp ? "block" : "none";
-        authForm.querySelector("button").innerText = isSignUp ? "Sign Up" : "Log In";
-      });
-
-      authForm.addEventListener("submit", async function (event) {
-        event.preventDefault();
-        const name = document.getElementById("name").value;
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
-        const dob = document.getElementById("dob").value;
-
-        try {
-          if (isSignUp) {
-            // ✅ Create User with Email & Password
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-
-            // ✅ Save User Data to Firestore
-            await setDoc(doc(db, "users", user.uid), {
-              fullName: name,
-              email: email,
-              password: password,
-            });
-function signUp(email, password) {
-    createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            console.log("User registered:", userCredential.user);
-        })
-        .catch((error) => {
-            console.error("Error:", error.message);
-        });
-}
-            alert("Account created successfully!");
-          } else {
-            await signInWithEmailAndPassword(auth, email, password);
-            alert("Login successful!");
-          }
-
-          // ✅ Redirect to Dashboard after successful login/signup
-          setTimeout(() => {
-            window.location.href = "dashboard.html";
-          }, 1000);
-        } catch (error) {
-          alert(error.message);
-          console.error("Firebase Error:", error);
-        }
-      });
-    });
-  </script>
-
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -172,5 +50,118 @@ function signUp(email, password) {
       color: #007BFF;
     }
   </style>
+</head>
+<body>
+  <div id="root">
+    <div class="card">
+      <h1 id="formTitle">Create New Account</h1>
+      
+      <!-- ✅ Authentication Form -->
+      <form id="authForm">
+        <div id="nameContainer">
+          <label for="name">Full Name:</label>
+          <input type="text" id="name" name="name">
+        </div>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+
+        <div id="dobContainer">
+          <label for="dob">Date of Birth:</label>
+          <input type="date" id="dob" name="dob">
+        </div>
+
+        <button type="submit">Sign Up</button>
+      </form>
+
+      <p id="toggleAuth">Already have an account? <a href="#">Log In</a></p>
+    </div>
+  </div>
+
+  <!-- ✅ Firebase Authentication & Firestore -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // ✅ Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDbyxievV9aKGHjLFyO0BKKv4V8rRd5P-k",
+      authDomain: "autismdiagnosistool.firebaseapp.com",
+      projectId: "autismdiagnosistool",
+      storageBucket: "autismdiagnosistool.appspot.com",
+      messagingSenderId: "932313058973",
+      appId: "1:932313058973:web:fbb31ab2cf6ef0ae700e74",
+      measurementId: "G-VDYP4DYPXB"
+    };
+
+    // ✅ Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const authForm = document.getElementById("authForm");
+      const toggleAuth = document.getElementById("toggleAuth");
+      const formTitle = document.getElementById("formTitle");
+      const nameContainer = document.getElementById("nameContainer");
+      const dobContainer = document.getElementById("dobContainer");
+      let isSignUp = true;
+
+      toggleAuth.addEventListener("click", (e) => {
+        e.preventDefault();
+        isSignUp = !isSignUp;
+        
+        formTitle.innerText = isSignUp ? "Create New Account" : "Sign In";
+        toggleAuth.innerHTML = isSignUp 
+          ? 'Already have an account? <a href="#">Log In</a>' 
+          : 'Don\'t have an account? <a href="#">Sign Up</a>';
+
+        nameContainer.style.display = isSignUp ? "block" : "none";
+        dobContainer.style.display = isSignUp ? "block" : "none";
+        authForm.querySelector("button").innerText = isSignUp ? "Sign Up" : "Log In";
+      });
+
+      authForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const name = document.getElementById("name")?.value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const dob = document.getElementById("dob")?.value;
+
+        try {
+          if (isSignUp) {
+            // ✅ Create User in Firebase Auth
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            // ✅ Save User Data to Firestore (without storing the password)
+            await setDoc(doc(db, "users", user.uid), {
+              fullName: name,
+              email: email,
+              dob: dob
+            });
+
+            alert("Account created successfully!");
+          } else {
+            // ✅ Sign In Existing User
+            await signInWithEmailAndPassword(auth, email, password);
+            alert("Login successful!");
+          }
+
+          // ✅ Redirect to Dashboard after successful login/signup
+          setTimeout(() => {
+            window.location.href = "dashboard.html";
+          }, 1000);
+        } catch (error) {
+          alert(error.message);
+          console.error("Firebase Error:", error);
+        }
+      });
+    });
+  </script>
 </body>
 </html>
