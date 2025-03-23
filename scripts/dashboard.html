@@ -14,9 +14,9 @@
         
             <img src="spectrum-Ai-logo.png" alt="Spectrum AI Logo" class="logo">
         <div class="nav-links">
-            <a href="about.html">About</a>
-            <a href="support-page.html">Support</a>
-            <a href="login.html">Login</a>
+            <a href="scripts/about.html">About</a>
+            <a href="scripts/support-page.html">Support</a>
+            <a href="scripts/login.html">Login</a>
             <button onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
         </div>
     </nav>
@@ -44,7 +44,7 @@
         function startQuestionnaire() {
             const currentDate = new Date().toLocaleDateString();
             localStorage.setItem('lastQuestionnaireDate', currentDate);
-            window.location.href = "start questionnaire.html";
+            window.location.href = "scripts/start questionnaire.html";
         }
 
         window.onload = function() {
