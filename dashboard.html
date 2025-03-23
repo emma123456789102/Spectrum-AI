@@ -7,6 +7,64 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
     <link rel="stylesheet" href="styles.css">
     <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #74ebd5, #acb6e5);
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background: #003366;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            height: 50px;
+        }
+        .nav-links a, .nav-links button {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .nav-links button:hover {
+            color: #f8b400;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            margin: 40px auto;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .card {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .primary-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .primary-btn:hover {
+            background: #45a049;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -22,10 +80,6 @@
     <div class="container">
         <h1>Welcome, <span id="userName">Loading...</span>!</h1>
         <p><strong>Email:</strong> <span id="userEmail">Loading...</span></p>
-        <p><strong>Date of Birth:</strong> <span id="userDob">Loading...</span></p>
-    </div>
-
-    <div class="container">
         <h2>Hello, User! 👋</h2>
         <p>Access your questionnaire results and track progress below.</p>
         <div class="card">
