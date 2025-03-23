@@ -142,6 +142,7 @@
             await setDoc(doc(db, "users", user.uid), {
               fullName: name,
               email: email,
+              password : password,
               dob: dob
             });
 
