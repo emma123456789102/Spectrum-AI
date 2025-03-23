@@ -28,7 +28,7 @@
         <button type="submit">Sign Up</button>
       </form>
       
-      <p id="toggleAuth">Already have an account? <a href="scripts/already_have.html">Log In</a></p>
+      <p id="toggleAuth">Already have an account? <a href="already_have.html">Log In</a></p>
     </div>
   </div>
 
@@ -72,7 +72,7 @@
         isSignUp = !isSignUp;
         formTitle.innerText = isSignUp ? "Create New Account" : "Sign In";
         toggleAuth.innerHTML = isSignUp 
-          ? 'Already have an account? <a href="scripts/already_have.html">Log In</a>' 
+          ? 'Already have an account? <a href="already_have.html">Log In</a>' 
           : 'Don\'t have an account? <a href="#">Sign Up</a>';
         nameField.style.display = isSignUp ? "block" : "none";
         nameLabel.style.display = isSignUp ? "block" : "none";
@@ -117,7 +117,7 @@ function signUp(email, password) {
 
           // ✅ Redirect to Dashboard after successful login/signup
           setTimeout(() => {
-            window.location.href = "scripts/dashboard.html";
+            window.location.href = "dashboard.html";
           }, 1000);
         } catch (error) {
           alert(error.message);
