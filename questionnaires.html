@@ -145,7 +145,7 @@
         // Function to send responses to Firestore
         async function submitResponses() {
           try {
-            await addDoc(collection(db, "autism_responses"), {
+            await addDoc(collection(db, "autism_responses", responseId), {
               responses: responses,
               timestamp: new Date()
             });
