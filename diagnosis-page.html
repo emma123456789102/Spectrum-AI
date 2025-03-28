@@ -77,7 +77,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     async function checkPrediction(responseId) {
-    const docRef = doc(db, "autismResponses", responseId);
+    const docRef = doc(db, "autism_responses", responseId);
     
     let attempts = 0;
     while (attempts < 10) {  // Try 10 times (adjust as needed)
@@ -97,7 +97,7 @@
 
     async function fetchLatestResponse() {
         try {
-            const q = query(collection(db, "autismResponses"), orderBy("timestamp", "desc"), limit(1));
+            const q = query(collection(db, "autism_responses"), orderBy("timestamp", "desc"), limit(1));
             const querySnapshot = await getDocs(q);
             if (!querySnapshot.empty) {
                 const latestResponse = querySnapshot.docs[0].data();
