@@ -112,21 +112,31 @@
             console.error("Error fetching latest response:", error);
         }
     }
+import firebase_admin
+from firebase_admin import credentials, db
+import joblib
+import numpy as np
 
-    async function sendToBackend(response) {
-        try {
-            const res = await fetch("http://127.0.0.1:5000/analyze", { // Adjust URL if hosted elsewhere
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(response)
-            });
+cred = credentials.Certificate("your-firebase-adminsdk.json")
+firebase_admin.initialize_app(cred, {
+    'databaseURL': 'https://your-project.firebaseio.com/'
+})
 
-            const data = await res.json();
-            console.log("Backend response:", data);
-            displayDiagnosis(data);
-        } catch (error) {
-            console.error("Error sending data to backend:", error);
-        }
+ref = db.reference('responses')
+entries = ref.get()
+
+model = joblib.load('autism_best_model.pkl')
+scaler = joblib.load('scaler.pkl')
+
+for key, entry in entries.items():
+    features = np.array([entry['age'], entry['income']]).reshape(1, -1)  # match feature order
+    features_scaled = scaler.transform(features)
+    prediction = model.predict(features_scaled)[0]
+
+    # Save result back to Firebase
+    result_ref = db.reference(f"responses/{key}/result")
+    result_ref.set(int(prediction))
+
     }
 
     function displayDiagnosis(result) {
