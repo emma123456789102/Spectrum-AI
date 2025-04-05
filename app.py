@@ -1,86 +1,84 @@
-
-# --- Deployment Instructions ---
-print("\nModel saved! To deploy, use Flask or FastAPI.")
-from flask import Flask, request, jsonify
-from flask_cors import CORS  # Import CORS to handle cross-origin requests
+import firebase_admin
+from firebase_admin import credentials, firestore
+from flask import Flask, render_template, request
 import joblib
-import numpy as np
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
-
-# Load the trained model and scaler
-model = joblib.load('autism_prediction_model_advanced.pkl')
-scaler = joblib.load('scaler.pkl')  # Save the scaler during training and load it here
-
-# Define the feature columns (Replace with actual feature names from your dataset)
-feature_columns = ['A1_score', 'A2_score', 'age', 'gender']  # Update accordingly
+from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 app = Flask(__name__)
-CORS(app)  # Allow requests from your frontend
+
+# Initialize Firebase Admin SDK
+cred = credentials.Certificate('firebase.json')
+firebase_admin.initialize_app(cred)
+db = firestore.client()
+
+# Load your trained machine learning model
+model = joblib.load('path_to_your_model.pkl')
+
+# Initialize encoders and scalers
+label_encoder = LabelEncoder()
 
 @app.route('/')
-def home():
-    return "Autism Prediction API is Running!"
+def index():
+    return render_template('index.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    try:
-        # Your code logic here
-        pass  # Placeholder for the actual code
-    except Exception as e:
-        return jsonify({'error': str(e)})
-
-
-# Define a simple scoring function
-def calculate_autism_score(answers):
-    # Assuming answers is a list of 10 responses (1 for Yes, 0 for No)
-    score = sum(answers)
+    # Get the form data submitted by the user
+    communication = request.form['communication']
+    developmental = request.form['developmental']
+    eye_contact = request.form['eye_contact']
+    interest_in_children = request.form['interest_in_children']
+    pretend_play = request.form['pretend_play']
+    repetitive_movements = request.form['repetitive_movements']
+    response_to_name = request.form['response_to_name']
+    routine_changes = request.form['routine_changes']
+    sensory_sensitivities = request.form['sensory_sensitivities']
+    social_cues = request.form['social_cues']
+    specific_interests = request.form['specific_interests']
     
-    # Define risk categories
-    if score >= 6:
-        result = "High likelihood of autism, consider consulting a specialist."
-    elif score >= 3:
-        result = "Moderate likelihood, monitoring recommended."
-    else:
-        result = "Low likelihood of autism."
+    # Create a DataFrame from the form data
+    data = {
+        'communication': [communication],
+        'developmental': [developmental],
+        'eye_contact': [eye_contact],
+        'interest_in_children': [interest_in_children],
+        'pretend_play': [pretend_play],
+        'repetitive_movements': [repetitive_movements],
+        'response_to_name': [response_to_name],
+        'routine_changes': [routine_changes],
+        'sensory_sensitivities': [sensory_sensitivities],
+        'social_cues': [social_cues],
+        'specific_interests': [specific_interests],
+    }
     
-    return score, result
+    df = pd.DataFrame(data)
 
-@app.route("/predict", methods=["POST"])
-def predict():
-    data = request.json  # Receive data from frontend
-    answers = data.get("answers", [])  # Expecting a list of numbers
+    # Encode categorical features using LabelEncoder
+    for column in df.columns:
+        df[column] = label_encoder.fit_transform(df[column])
+
+    # Make the prediction using the trained model
+    prediction = model.predict(df)
+
+    # Map the result to a human-readable format
+    result = 'Autism Diagnosed' if prediction[0] == 1 else 'No Autism'
+
+    return render_template('result.html', result=result)
+
+# For getting data from Firebase (example)
+@app.route('/fetch_data')
+def fetch_data():
+    # Example: Fetching the data from Firestore collection
+    collection_ref = db.collection('autism_data')  # Change to your collection name
+    docs = collection_ref.stream()
+
+    # Store the fetched data in a list for rendering or processing
+    data = []
+    for doc in docs:
+        data.append(doc.to_dict())
     
-    if len(answers) != 10:  # Ensure correct number of answers
-        return jsonify({"error": "Invalid number of answers, expected 10."}), 400
-
-    score, message = calculate_autism_score(answers)
-    
-    return jsonify({"score": score, "message": message})
-
-if __name__ == "__main__":
-    app.run(debug=True)
-@app.route("/predict_model", methods=["POST"])
-def predict_model():
-    try:
-        # Receive JSON data from frontend
-        data = request.get_json()
-        
-        # Convert to DataFrame
-        input_data = pd.DataFrame([data], columns=feature_columns)
-        
-        # Standardize the input
-        input_scaled = scaler.transform(input_data)
-        
-        # Make prediction
-        prediction = model.predict(input_scaled)
-        
-        result = "Autistic" if prediction[0] == 1 else "Not Autistic"
-        
-        return jsonify({'prediction': result})
-    except Exception as e:
-        return jsonify({'error': str(e)})
+    return render_template('data_display.html', data=data)
 
 if __name__ == '__main__':
     app.run(debug=True)
-
