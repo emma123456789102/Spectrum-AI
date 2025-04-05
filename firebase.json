@@ -19,3 +19,25 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+{
+  "hosting": {
+    "public": "public",  // Directory containing your static files (HTML, CSS, JS)
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "firestore": {
+    "rules": "firestore.rules"  // Security rules for Firestore
+  },
+  "database": {
+    "rules": "database.rules.json"  // Security rules for Realtime Database (if using it)
+  }
+}
