@@ -6,17 +6,38 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 app = Flask(__name__)
+from flask import Flask
+import firebase_admin
+from firebase_admin import credentials, db
+import joblib
+import numpy as np
 
-# Initialize Firebase Admin SDK
-cred = credentials.Certificate('firebase.json')
-firebase_admin.initialize_app(cred)
-db = firestore.client()
+app = Flask(__name__)
 
-# Load your trained machine learning model
-model = joblib.load('path_to_your_model.pkl')
+cred = credentials.Certificate("firebase.json")
+firebase_admin.initialize_app(cred, {
+    'databaseURL': 'https://autismdiagnosistool-default-rtdb.europe-west1.firebasedatabase.app'
+})
 
-# Initialize encoders and scalers
-label_encoder = LabelEncoder()
+model = joblib.load('autism_best_model.pkl')
+scaler = joblib.load('scaler.pkl')
+
+@app.route('/predict')
+def predict():
+    ref = db.reference('autism_responses')
+    entries = ref.get()
+
+    results = {}
+    for key, entry in entries.items():
+        features = np.array([entry['age'], entry['income']]).reshape(1, -1)
+        features_scaled = scaler.transform(features)
+        prediction = model.predict(features_scaled)[0]
+        results[key] = int(prediction)
+
+        result_ref = db.reference(f"autism_responses/{key}/result")
+        result_ref.set(int(prediction))
+
+    return results
 
 @app.route('/')
 def index():
