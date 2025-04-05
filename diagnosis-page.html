@@ -61,39 +61,40 @@
    <script type="module">
     // Firebase Setup
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-    import { getFirestore, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDbyxievV9aKGHjLFyO0BKKv4V8rRd5P-k",
-            authDomain: "autismdiagnosistool.firebaseapp.com",
-            databaseURL: "https://autismdiagnosistool-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "autismdiagnosistool",
-            storageBucket: "autismdiagnosistool.firebasestorage.app",
-            messagingSenderId: "932313058973",
-            appId: "1:932313058973:web:fbb31ab2cf6ef0ae700e74",
-            measurementId: "G-VDYP4DYPXB"
+        authDomain: "autismdiagnosistool.firebaseapp.com",
+        databaseURL: "https://autismdiagnosistool-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "autismdiagnosistool",
+        storageBucket: "autismdiagnosistool.firebasestorage.app",
+        messagingSenderId: "932313058973",
+        appId: "1:932313058973:web:fbb31ab2cf6ef0ae700e74",
+        measurementId: "G-VDYP4DYPXB"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+
     async function checkPrediction(responseId) {
-    const docRef = doc(db, "autism_responses", responseId);
-    
-    let attempts = 0;
-    while (attempts < 10) {  // Try 10 times (adjust as needed)
-        const docSnap = await getDoc(docRef);
+        const docRef = doc(db, "autism_responses", responseId);
         
-        if (docSnap.exists() && docSnap.data().prediction) {
-            alert("Prediction: " + docSnap.data().prediction);  // Show result
-            return;
+        let attempts = 0;
+        while (attempts < 10) {
+            const docSnap = await getDoc(docRef);
+            
+            if (docSnap.exists() && docSnap.data().prediction) {
+                alert("Prediction: " + docSnap.data().prediction);
+                return;
+            }
+            
+            await new Promise(resolve => setTimeout(resolve, 3000));  // Wait 3 sec before retrying
+            attempts++;
         }
         
-        await new Promise(resolve => setTimeout(resolve, 3000));  // Wait 3 sec before retrying
-        attempts++;
+        alert("Prediction not available. Try again later.");
     }
-    
-    alert("Prediction not available. Try again later.");
-}
 
     async function fetchLatestResponse() {
         try {
@@ -103,40 +104,14 @@
                 const latestResponse = querySnapshot.docs[0].data();
                 console.log("Fetched response:", latestResponse);
                 
-                // Send response to Python API for processing
-                sendToBackend(latestResponse);
+                // Send response to Python API for processing (AJAX to backend, not implemented here)
+                // sendToBackend(latestResponse);
             } else {
                 document.getElementById("diagnosisMessage").innerText = "No responses found.";
             }
         } catch (error) {
             console.error("Error fetching latest response:", error);
         }
-    }
-import firebase_admin
-from firebase_admin import credentials, db
-import joblib
-import numpy as np
-
-cred = credentials.Certificate("your-firebase-adminsdk.json")
-firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://your-project.firebaseio.com/'
-})
-
-ref = db.reference('responses')
-entries = ref.get()
-
-model = joblib.load('autism_best_model.pkl')
-scaler = joblib.load('scaler.pkl')
-
-for key, entry in entries.items():
-    features = np.array([entry['age'], entry['income']]).reshape(1, -1)  # match feature order
-    features_scaled = scaler.transform(features)
-    prediction = model.predict(features_scaled)[0]
-
-    # Save result back to Firebase
-    result_ref = db.reference(f"responses/{key}/result")
-    result_ref.set(int(prediction))
-
     }
 
     function displayDiagnosis(result) {
