@@ -84,7 +84,7 @@ import {
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-
+    const model = await tf.loadLayersModel('autism_prediction_model.pkl');
     async function checkPrediction(responseId) {
         const docRef = doc(db, "autism_responses", responseId);
         
