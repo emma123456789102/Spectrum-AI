@@ -66,7 +66,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
 
     <script>
-        // Your Firebase configuration object (replace these with actual values from your Firebase project)
+        // Firebase configuration object (replace with actual values from your Firebase project)
         const firebaseConfig = {
           apiKey: "AIzaSyDbyxievV9aKGHjLFyO0BKKv4V8rRd5P-k",
           authDomain: "autismdiagnosistool.firebaseapp.com",
@@ -76,9 +76,9 @@
           messagingSenderId: "932313058973",
           appId: "1:932313058973:web:fbb31ab2cf6ef0ae700e74",
           measurementId: "G-VDYP4DYPXB"
-};
+        };
 
-        // Initialize Firebase with your configuration
+        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
@@ -87,11 +87,12 @@
         // Load the model
         async function loadModel() {
             try {
-                // Load the TensorFlow.js model
+                // Make sure the model URL is correct
                 model = await tf.loadGraphModel('autism_prediction_model_full.json');
                 console.log("Model loaded successfully!");
             } catch (error) {
                 console.error("Error loading model:", error);
+                document.getElementById("diagnosisMessage").innerText = "Error loading the model.";
             }
         }
 
@@ -126,12 +127,12 @@
                 }
             } catch (error) {
                 console.error("Error fetching latest response:", error);
+                document.getElementById("diagnosisMessage").innerText = "Error fetching data from Firestore.";
             }
         }
 
         // Function to make a prediction using the model
         async function makePrediction(data) {
-            // Ensure the model is loaded
             if (!model) {
                 console.log("Model is not loaded yet.");
                 return;
@@ -140,15 +141,19 @@
             // Prepare the input data (convert to TensorFlow tensor)
             const inputTensor = tf.tensor([data]);  // Convert your data to a tensor format
 
-            // Make the prediction
-            const prediction = model.predict(inputTensor);
-            prediction.array().then(predictionArray => {
+            try {
+                const prediction = await model.predict(inputTensor);
+                const predictionArray = await prediction.array();
                 console.log("Prediction:", predictionArray);
+
                 // Display the diagnosis based on the model output
                 const diagnosis = predictionArray[0] > 0.5 ? 'Autism' : 'Non-autism';
                 document.getElementById("diagnosisMessage").innerText = `Diagnosis: ${diagnosis}`;
                 document.getElementById("recommendation").innerText = "Please consult with a medical professional for further steps.";
-            });
+            } catch (error) {
+                console.error("Error making prediction:", error);
+                document.getElementById("diagnosisMessage").innerText = "Error during prediction.";
+            }
         }
 
         // Redirect to Dashboard
@@ -161,10 +166,13 @@
             window.location.href = "support-page.html";
         }
 
-        // Load the model and fetch latest response when the page loads
+        // Load the model and fetch the latest response when the page loads
         window.onload = function() {
-            loadModel();
-            fetchLatestResponse();
+            loadModel().then(() => {
+                fetchLatestResponse();
+            }).catch(error => {
+                console.error("Error during page load:", error);
+            });
         };
     </script>
 </head>
