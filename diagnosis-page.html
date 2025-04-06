@@ -87,15 +87,16 @@
 
         // Load the model function
         async function loadModel() {
-            try {
-                // Make sure the model URL is correct
-                model = await tf.loadGraphModel('https://cors-anywhere.herokuapp.com/https://raw.githubusercontent.com/emma123456789102/Spectrum-AI/main/model.json');
-                console.log("Model loaded successfully!");
-            } catch (error) {
-                console.error("Error loading model:", error);
-                document.getElementById("diagnosisMessage").innerText = "Error loading the model.";
-            }
+        const modelUrl = 'https://firebasestorage.googleapis.com/v0/b/spectrum-ai-model.appspot.com/o/model%2Fmodel.json?alt=media&token=4d61304e-df27-4e24-ba30-f6e3bf62165a';
+        try {
+            const model = await tf.loadGraphModel(modelUrl);
+            console.log('Model loaded successfully!');
+        } catch (error) {
+            console.error('Error loading model:', error);
         }
+    }
+window.onload = loadModel;
+
 
         // Fetch the latest response from Firestore
         async function fetchLatestResponse() {
