@@ -20,15 +20,14 @@ Welcome to the repository for my dissertation project. This repository contains 
 
 ```
 ├── data
-│   ├── raw
-│   └── processed
+│ raw
+│ processed
 ├── docs
 ├── notebooks
-├── src
-│   ├── analysis
-│   └── visualization
-├── tests
-└── README.md
+│  analysis
+│  visualization
+| tests
+| README.md
 ```
 
 - `data/`: Contains datasets used in the project.
