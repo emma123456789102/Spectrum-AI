@@ -1,22 +1,13 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+import firebase_admin
+from firebase_admin import credentials, db
+import joblib
+import numpy as np
 
+# Initialize Flask app
 app = Flask(__name__)
 CORS(app)
-
-@app.route('/')
-def home():
-    return "Welcome to the Autism Questionnaire App!"
-
-@app.route('/analyze', methods=['POST'])
-def analyze():
-    data = request.json
-    # Perform the analysis here (mock logic as an example)
-    result = {"diagnosis": "moderate likelihood of autism traits"}
-    return jsonify(result)
-
-if __name__ == '__main__':
-    app.run(debug=True)
 
 # Initialize Firebase
 cred = credentials.Certificate("firebase.json")
@@ -28,6 +19,19 @@ firebase_admin.initialize_app(cred, {
 model = joblib.load('autism_best_model.pkl')
 scaler = joblib.load('scaler.pkl')
 
+# Home route
+@app.route('/')
+def home():
+    return "Welcome to the Autism Questionnaire App!"
+
+# Analyze route (mock logic for now)
+@app.route('/analyze', methods=['POST'])
+def analyze():
+    data = request.json
+    result = {"diagnosis": "moderate likelihood of autism traits"}
+    return jsonify(result)
+
+# Prediction route
 @app.route('/predict', methods=['GET'])
 def predict():
     ref = db.reference('autism_responses')
@@ -36,7 +40,6 @@ def predict():
     results = {}
     if entries:
         for key, entry in entries.items():
-            # Assuming 'age' and 'income' exist
             features = np.array([entry.get('age', 0), entry.get('income', 0)]).reshape(1, -1)
             features_scaled = scaler.transform(features)
             prediction = model.predict(features_scaled)[0]
@@ -48,5 +51,6 @@ def predict():
 
     return jsonify(results)
 
+# Start the app
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=5000)
