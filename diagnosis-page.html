@@ -89,7 +89,7 @@
         async function loadModel() {
             try {
                 // Make sure the model URL is correct
-                model = await tf.loadGraphModel('https://raw.githubusercontent.com/emma123456789102/Spectrum-AI/main/model.json');
+                model = await tf.loadGraphModel('https://cors-anywhere.herokuapp.com/https://raw.githubusercontent.com/emma123456789102/Spectrum-AI/main/model.json');
                 console.log("Model loaded successfully!");
             } catch (error) {
                 console.error("Error loading model:", error);
