@@ -1,69 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Diagnosis Result</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f8ff;
-      padding: 20px;
-      max-width: 800px;
-      margin: auto;
-    }
-    h1 {
-      text-align: center;
-      color: #333;
-    }
-    .result {
-      margin-top: 30px;
-      padding: 20px;
-      background-color: #e6f2ff;
-      border-left: 6px solid #0077cc;
-      font-size: 18px;
-    }
-    .score {
-      font-size: 24px;
-      font-weight: bold;
-      color: #0077cc;
-    }
-  </style>
-</head>
-<body>
-  <h1>Diagnosis Result</h1>
-  <div class="result" id="result">Loading diagnosis...</div>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnosis Results</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap">
+    <style>
+        .navbar {
+            background: #175592;
+            color: white;
+            padding: 15px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-  <script>
-    const urlParams = new URLSearchParams(window.location.search);
+        .nav-buttons button {
+            margin-left: 10px;
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-    const scores = {
-      "Often": 2,
-      "Sometimes": 1,
-      "Rarely/Never": 0
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #74ebd5, #acb6e5);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            color: #003366;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 40px auto;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+    </style>
+   <script type="module">
+    // Firebase Setup
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+    import { getFirestore, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDbyxievV9aKGHjLFyO0BKKv4V8rRd5P-k",
+            authDomain: "autismdiagnosistool.firebaseapp.com",
+            databaseURL: "https://autismdiagnosistool-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "autismdiagnosistool",
+            storageBucket: "autismdiagnosistool.firebasestorage.app",
+            messagingSenderId: "932313058973",
+            appId: "1:932313058973:web:fbb31ab2cf6ef0ae700e74",
+            measurementId: "G-VDYP4DYPXB"
     };
 
-    let totalScore = 0;
-    for (let [key, value] of urlParams.entries()) {
-      if (scores[value] !== undefined) {
-        totalScore += scores[value];
-      }
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    async function checkPrediction(responseId) {
+    const docRef = doc(db, "autism_responses", responseId);
+    
+    let attempts = 0;
+    while (attempts < 10) {  // Try 10 times (adjust as needed)
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists() && docSnap.data().prediction) {
+            alert("Prediction: " + docSnap.data().prediction);  // Show result
+            return;
+        }
+        
+        await new Promise(resolve => setTimeout(resolve, 3000));  // Wait 3 sec before retrying
+        attempts++;
+    }
+    
+    alert("Prediction not available. Try again later.");
+}
+
+    async function fetchLatestResponse() {
+        try {
+            const q = query(collection(db, "autism_responses"), orderBy("timestamp", "desc"), limit(1));
+            const querySnapshot = await getDocs(q);
+            if (!querySnapshot.empty) {
+                const latestResponse = querySnapshot.docs[0].data();
+                console.log("Fetched response:", latestResponse);
+                
+                // Send response to Python API for processing
+                sendToBackend(latestResponse);
+            } else {
+                document.getElementById("diagnosisMessage").innerText = "No responses found.";
+            }
+        } catch (error) {
+            console.error("Error fetching latest response:", error);
+        }
     }
 
-    let diagnosisText = "";
-    if (totalScore >= 46) {
-      diagnosisText = `High likelihood of neurodivergent traits.`;
-    } else if (totalScore >= 26) {
-      diagnosisText = `Moderate likelihood of neurodivergent traits.`;
-    } else {
-      diagnosisText = `Low likelihood of neurodivergent traits.`;
+    async function sendToBackend(response) {
+        try {
+            const res = await fetch("http://127.0.0.1:5000/analyze", { // Adjust URL if hosted elsewhere
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(response)
+            });
+
+            const data = await res.json();
+            console.log("Backend response:", data);
+            displayDiagnosis(data);
+        } catch (error) {
+            console.error("Error sending data to backend:", error);
+        }
     }
 
-    document.getElementById("result").innerHTML = `
-      <p class="score">Score: ${totalScore}</p>
-      <p>${diagnosisText}</p>
-      <p>This result is not a formal diagnosis. Please consult a professional for a comprehensive assessment.</p>
-    `;
-  </script>
+    function displayDiagnosis(result) {
+        document.getElementById("diagnosisMessage").innerText = result.diagnosis;
+        document.getElementById("recommendation").innerText = result.recommendation;
+    }
+
+    function goToDashboard() {
+        window.location.href = "dashboard.html";
+    }
+
+    function goToSupport() {
+        window.location.href = "support-page.html";
+    }
+
+    window.onload = fetchLatestResponse;
+</script>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>Autism Diagnosis Questionnaire</h1>
+        <div class="nav-buttons">
+            <button onclick="goToDashboard()">Back to Dashboard</button>
+            <button onclick="goToSupport()">Support</button>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>Diagnosis Results</h1>
+        <p id="diagnosisMessage">Loading...</p>
+        <h3>What Next?</h3>
+        <p id="recommendation">Please wait while we analyse your results...</p>
+        <button onclick="window.location.href='questionnaires.html'">Retake Questionnaire</button>
+    </div>
 </body>
 </html>
