@@ -6,6 +6,7 @@
     <title>Diagnosis Results</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap">
     <style>
+        /* Styling here remains unchanged */
         .navbar {
             background: #175592;
             color: white;
@@ -66,7 +67,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
 
     <script>
-        // Firebase configuration object (replace with actual values from your Firebase project)
+        // Ensure the Firebase config is placed inside this block after loading Firebase SDK
         const firebaseConfig = {
           apiKey: "AIzaSyDbyxievV9aKGHjLFyO0BKKv4V8rRd5P-k",
           authDomain: "autismdiagnosistool.firebaseapp.com",
@@ -78,13 +79,13 @@
           measurementId: "G-VDYP4DYPXB"
         };
 
-        // Initialize Firebase
+        // Initialize Firebase within the script block
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
         let model;
 
-        // Load the model
+        // Load the model function
         async function loadModel() {
             try {
                 // Make sure the model URL is correct
@@ -105,7 +106,7 @@
                     const latestResponse = querySnapshot.docs[0].data();
                     console.log("Fetched response:", latestResponse);
 
-                    // Use the latest response to make a prediction
+                    // Prepare the data array
                     const responseData = [
                         latestResponse.delay_in_speaking, latestResponse.avoid_group_activities, latestResponse.dislike_textures,
                         latestResponse.repetitive_movements, latestResponse.self_soothing, latestResponse.sensory_seeking,
@@ -131,27 +132,27 @@
             }
         }
 
-        // Function to make a prediction using the model
+        // Make prediction function
         async function makePrediction(data) {
             if (!model) {
                 console.log("Model is not loaded yet.");
                 return;
             }
 
-            // Prepare the input data (convert to TensorFlow tensor)
-            const inputTensor = tf.tensor([data]);  // Convert your data to a tensor format
+            // Prepare the input data
+            const inputTensor = tf.tensor([data]);  // Convert to a tensor
 
             try {
                 const prediction = await model.predict(inputTensor);
                 const predictionArray = await prediction.array();
                 console.log("Prediction:", predictionArray);
 
-                // Display the diagnosis based on the model output
+                // Display diagnosis
                 const diagnosis = predictionArray[0] > 0.5 ? 'Autism' : 'Non-autism';
                 document.getElementById("diagnosisMessage").innerText = `Diagnosis: ${diagnosis}`;
                 document.getElementById("recommendation").innerText = "Please consult with a medical professional for further steps.";
             } catch (error) {
-                console.error("Error making prediction:", error);
+                console.error("Error during prediction:", error);
                 document.getElementById("diagnosisMessage").innerText = "Error during prediction.";
             }
         }
@@ -166,7 +167,7 @@
             window.location.href = "support-page.html";
         }
 
-        // Load the model and fetch the latest response when the page loads
+        // Load model and fetch data on page load
         window.onload = function() {
             loadModel().then(() => {
                 fetchLatestResponse();
