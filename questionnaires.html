@@ -1,83 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Diagnosis Result</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f8ff;
-      padding: 20px;
-      max-width: 800px;
-      margin: auto;
-    }
-    h1 {
-      text-align: center;
-      color: #333;
-    }
-    .result {
-      margin-top: 30px;
-      padding: 20px;
-      background-color: #e6f2ff;
-      border-left: 6px solid #0077cc;
-      font-size: 18px;
-    }
-    .score {
-      font-size: 24px;
-      font-weight: bold;
-      color: #0077cc;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autism Screening Questionnaire</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #74ebd5, #acb6e5);
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .navbar {
+            background: #175592;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .navbar h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: white;
+            background: #4CAF50;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .nav-links a:hover {
+            background: #45a049;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 50%;
+            margin: auto;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .progress-bar {
+            width: 100%;
+            background: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .progress {
+            height: 10px;
+            width: 0%;
+            background: #4CAF50;
+        }
+        button {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .accessibility-controls {
+            margin-bottom: 15px;
+        }
+        .accessibility-controls button {
+            width: 48%;
+            padding: 8px;
+            margin: 5px;
+            border-radius: 5px;
+            border: none;
+            background: #ff9800;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .accessibility-controls button:hover {
+            background: #e68900;
+        }
+        .high-contrast-mode {
+            background: black;
+            color: yellow;
+        }
+    </style>
 </head>
 <body>
-  <h1>Diagnosis Result</h1>
-  <div class="result" id="result">Loading diagnosis...</div>
+    <nav class="navbar">
+        <h1>Autism Screening Questionnaire</h1>
+        <div class="nav-links">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="support-page.html">Support</a>
+        </div>
+    </nav>
 
-  <script>
-    function sigmoid(x) {
-      return 1 / (1 + Math.exp(-x));
-    }
+    <div class="container">
+        <h1>Autism Screening Questionnaire</h1>
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        <div id="question-container"></div>
+        <div id="options-container"></div>
+        <button onclick="nextQuestion()">Next</button>
+    </div>
+    <div class="accessibility-controls">
+        <button id="increase-text">Increase Text Size</button>
+        <button id="decrease-text">Decrease Text Size</button>
+        <button id="high-contrast">Toggle High Contrast</button>
+        <button id="speak-text">Speak Text</button>
+    </div>
+    <script type="module">
+        // Import Firebase libraries
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+      
+        // Firebase Configuration (Replace with your own Firebase credentials)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDbyxievV9aKGHjLFyO0BKKv4V8rRd5P-k",
+            authDomain: "autismdiagnosistool.firebaseapp.com",
+            databaseURL: "https://autismdiagnosistool-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "autismdiagnosistool",
+            storageBucket: "autismdiagnosistool.firebasestorage.app",
+            messagingSenderId: "932313058973",
+            appId: "1:932313058973:web:fbb31ab2cf6ef0ae700e74",
+            measurementId: "G-VDYP4DYPXB"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+      
+        // Function to send responses to Firestore
+        async function submitResponses() {
+          try {
+            await addDoc(collection(db, "autism_responses"), {
+              responses: responses,
+              timestamp: new Date()
+            });
+            alert("Responses submitted successfully!");
+            window.location.href = "diagnosis-page.html"; // Redirect after submission
+          } catch (error) {
+            console.error("Error submitting responses:", error);
+          }
+        }
+      
+        // Modify nextQuestion() to submit when finished
+        window.nextQuestion = function() {
+          const selectedOption = document.querySelector('input[name="response"]:checked');
+          if (selectedOption) {
+            responses[questions[currentQuestion]] = selectedOption.value;
+            currentQuestion++;
+      
+            if (currentQuestion < questions.length) {
+              loadQuestion();
+            } else {
+              submitResponses(); // Send data when all questions are answered
+            }
+          } else {
+            alert("Please select an answer before proceeding.");
+          }
+        };
+      </script>
+      
+    <script>
+        const questions = [
+            "Does the individual make appropriate eye contact during conversations?",
+            "Does the individual respond when their name is called?",
+            "Does the individual struggle to understand sarcasm or jokes?",
+            "Does the individual take things very literally?",
+            "Does the individual have difficulty understanding other people’s feelings?",
+            "Does the individual struggle to hold two-way conversations?",
+            "Does the individual prefer to play alone rather than with other children?",
+            "Does the individual avoid group activities or social gatherings?",
+            "Does the individual struggle to make or maintain friendships?",
+            "Does the individual have trouble adapting to changes in social rules?",
+            "Does the individual engage in repetitive movements (e.g., hand flapping, rocking, spinning)?",
+            "Does the individual repeat words or phrases (echolalia) without understanding their meaning?",
+            "Does the individual insist on following the same routine every day and get upset by changes?",
+            "Does the individual have an intense focus on specific topics or objects?",
+            "Does the individual line up toys or objects in a specific order instead of playing with them?",
+            "Does the individual engage in self-soothing behaviors (e.g., tapping, humming, hand-waving)?",
+            "Does the individual show an unusual attachment to specific objects?",
+            "Does the individual overreact or underreact to loud sounds, bright lights, or strong smells?",
+            "Does the individual dislike certain textures of food or clothing?",
+            "Does the individual enjoy sensory-seeking behaviors (e.g., spinning, jumping, touching different textures)?",
+            "Does the individual get extremely bothered by certain noises?",
+            "Does the individual experience frequent emotional outbursts or meltdowns?",
+            "Does the individual struggle with managing frustration or disappointment?",
+            "Does the individual show extreme distress when plans change unexpectedly?",
+            "Does the individual have difficulty transitioning from one activity to another?",
+            "Did the individual have a delay in speaking their first words?",
+            "Does the individual speak in a monotone or robotic voice?",
+            "Does the individual prefer communicating through writing, pictures, or gestures rather than speech?",
+            "Does the individual struggle to understand or follow multi-step instructions?",
+            "Does the individual repeat certain questions or phrases even when the conversation has moved on?"
+        ];
 
-    const weights = [
-      1.2748, 0.9615, 1.2706, 1.1535, 1.2809,
-      1.1982, 1.0971, 1.2637, 1.1158, 1.1873,
-      1.1891, 1.2846, 1.2106, 1.2005, 1.0953,
-      1.2639, 1.2767, 1.2729, 1.1645, 1.2583,
-      1.1064, 1.1674, 1.2031, 1.2903, 1.2733,
-      1.2311, 1.2047, 1.1509, 1.2402, 1.1437
-    ];
+        const responses = {};
+        let currentQuestion = 0;
 
-    const intercept = -50.1785;
+        function loadQuestion() {
+            if (currentQuestion < questions.length) {
+                document.getElementById("question-container").innerText = questions[currentQuestion];
+                document.getElementById("options-container").innerHTML = `
+                    <label><input type="radio" name="response" value="Never"> Never</label>
+                    <label><input type="radio" name="response" value="Rarely"> Rarely</label>
+                    <label><input type="radio" name="response" value="Sometimes"> Sometimes</label>
+                    <label><input type="radio" name="response" value="Often"> Often</label>
+                    <label><input type="radio" name="response" value="Always"> Always</label>
+                `;
+                document.getElementById("progress").style.width = `${(currentQuestion / questions.length) * 100}%`;
+            } else {
+                window.location.href = "diagnosis-page.html";
+            }
+        }
+        document.getElementById("increase-text").addEventListener("click", () => {
+    let currentSize = window.getComputedStyle(document.body).fontSize;
+    let newSize = parseFloat(currentSize) * 1.2; // Increase by 20%
+    document.body.style.fontSize = newSize + "px";
+});
+        document.getElementById("decrease-text").addEventListener("click", () => {
+            document.body.style.fontSize = "1em";
+        });
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const answers = [];
-    for (let i = 1; i <= 30; i++) {
-      const val = urlParams.get(`q${i}`);
-      answers.push(val === "Often" ? 2 : val === "Sometimes" ? 1 : 0);
-    }
+        document.getElementById("high-contrast").addEventListener("click", () => {
+            document.body.classList.toggle("high-contrast-mode");
+        });
 
-    let score = intercept;
-    for (let i = 0; i < 30; i++) {
-      score += answers[i] * weights[i];
-    }
+        document.getElementById("speak-text").addEventListener("click", () => {
+            const questions = document.querySelectorAll("questions");
+            let textToSpeak = "";
+            questions.forEach((question) => {
+                textToSpeak += question.textContent + " ";
+            });
 
-    const probability = sigmoid(score);
-    let diagnosisText = "";
+            if ('speechSynthesis' in window) {
+                const speech = new SpeechSynthesisUtterance(textToSpeak);
+                speech.lang = 'en-US';
+                speech.rate = 0.9;
+                window.speechSynthesis.speak(speech);
+            } else {
+                alert("Sorry, your browser doesn't support text-to-speech.");
+            }
+        });
 
-    if (probability > 0.8) {
-      diagnosisText = "High likelihood of autism traits.";
-    } else if (probability > 0.5) {
-      diagnosisText = "Moderate likelihood of autism traits.";
-    } else {
-      diagnosisText = "Low likelihood of autism traits.";
-    }
+        function nextQuestion() {
+            const selectedOption = document.querySelector('input[name="response"]:checked');
+            if (selectedOption) {
+                responses[questions[currentQuestion]] = selectedOption.value;
+                currentQuestion++;
+                loadQuestion();
+            } else {
+                alert("Please select an answer before proceeding.");
+            }
+        }
 
-    document.getElementById("result").innerHTML = `
-      <p class="score">AI Probability: ${(probability * 100).toFixed(1)}%</p>
-      <p>${diagnosisText}</p>
-      <p>This is not a medical diagnosis. Please consult a professional for further assessment.</p>
-    `;
-  </script>
+        window.onload = loadQuestion;
+    </script>
 </body>
 </html>
