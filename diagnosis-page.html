@@ -58,39 +58,46 @@
             background: #45a049;
         }
     </style>
-    <script type="module">
-        // Import TensorFlow.js
-        import * as tf from 'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.0.0/dist/tf.min.js';
+    <!-- TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.0.0/dist/tf.min.js"></script>
 
-        const modelUrl = 'autism_prediction_model_full.json';  // The model.json file path
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { 
-      getFirestore, 
-      collection, 
-      doc, 
-      getDoc, 
-      query, 
-      orderBy, 
-      limit, 
-      getDocs 
-    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    <!-- Firebase SDK (Add your Firebase SDK snippet here) -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+
+    <script>
+        // Initialize Firebase with your config
+        cconst firebaseConfig = {
+  apiKey: "AIzaSyDbyxievV9aKGHjLFyO0BKKv4V8rRd5P-k",
+  authDomain: "autismdiagnosistool.firebaseapp.com",
+  databaseURL: "https://autismdiagnosistool-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "autismdiagnosistool",
+  storageBucket: "autismdiagnosistool.firebasestorage.app",
+  messagingSenderId: "932313058973",
+  appId: "1:932313058973:web:fbb31ab2cf6ef0ae700e74",
+  measurementId: "G-VDYP4DYPXB"
+};
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
         let model;
+
+        // Load the model
         async function loadModel() {
             try {
                 // Load the TensorFlow.js model
-                model = await tf.loadLayersModel(modelUrl);
+                model = await tf.loadGraphModel('autism_prediction_model_full.json');
                 console.log("Model loaded successfully!");
             } catch (error) {
                 console.error("Error loading model:", error);
             }
         }
 
-        // Fetch the latest response from the Firestore database
+        // Fetch the latest response from Firestore
         async function fetchLatestResponse() {
             try {
-                const q = query(collection(db, "autism_responses"), orderBy("timestamp", "desc"), limit(1));
-                const querySnapshot = await getDocs(q);
+                const q = db.collection("autism_responses").orderBy("timestamp", "desc").limit(1);
+                const querySnapshot = await q.get();
                 if (!querySnapshot.empty) {
                     const latestResponse = querySnapshot.docs[0].data();
                     console.log("Fetched response:", latestResponse);
@@ -152,7 +159,7 @@
             window.location.href = "support-page.html";
         }
 
-        // Load the model when the page loads
+        // Load the model and fetch latest response when the page loads
         window.onload = function() {
             loadModel();
             fetchLatestResponse();
