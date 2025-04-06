@@ -61,22 +61,24 @@
     <!-- TensorFlow.js -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.0.0/dist/tf.min.js"></script>
 
-    <!-- Firebase SDK (Add your Firebase SDK snippet here) -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
 
     <script>
-        // Initialize Firebase with your config
-        cconst firebaseConfig = {
-  apiKey: "AIzaSyDbyxievV9aKGHjLFyO0BKKv4V8rRd5P-k",
-  authDomain: "autismdiagnosistool.firebaseapp.com",
-  databaseURL: "https://autismdiagnosistool-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "autismdiagnosistool",
-  storageBucket: "autismdiagnosistool.firebasestorage.app",
-  messagingSenderId: "932313058973",
-  appId: "1:932313058973:web:fbb31ab2cf6ef0ae700e74",
-  measurementId: "G-VDYP4DYPXB"
+        // Your Firebase configuration object (replace these with actual values from your Firebase project)
+        const firebaseConfig = {
+          apiKey: "AIzaSyDbyxievV9aKGHjLFyO0BKKv4V8rRd5P-k",
+          authDomain: "autismdiagnosistool.firebaseapp.com",
+          databaseURL: "https://autismdiagnosistool-default-rtdb.europe-west1.firebasedatabase.app",
+          projectId: "autismdiagnosistool",
+          storageBucket: "autismdiagnosistool.firebasestorage.app",
+          messagingSenderId: "932313058973",
+          appId: "1:932313058973:web:fbb31ab2cf6ef0ae700e74",
+          measurementId: "G-VDYP4DYPXB"
 };
+
+        // Initialize Firebase with your configuration
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
