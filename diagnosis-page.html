@@ -63,6 +63,17 @@
         import * as tf from 'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.0.0/dist/tf.min.js';
 
         const modelUrl = 'autism_prediction_model_full.json';  // The model.json file path
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { 
+      getFirestore, 
+      collection, 
+      doc, 
+      getDoc, 
+      query, 
+      orderBy, 
+      limit, 
+      getDocs 
+    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
         let model;
         async function loadModel() {
